@@ -51,9 +51,7 @@ class Room(object):
         """
         # _neighbors reference starts at the north neighbor and goes clockwise
         self.__neighbors = [None, None, None, None]
-
         self.__occupant = None
-
         self.__type = type
 
     def add_neighbor(self, room, direction):
