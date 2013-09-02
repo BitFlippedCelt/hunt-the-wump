@@ -95,9 +95,39 @@ class Map(object):
                     self.map[x][y] = None
 
         # Validate room layout
-        self.validate_layout()
+        groups = self.validate_layout()
 
-        print("Map generated with {0} rooms.".format(len(self.__rooms)))
+        if len(groups) > 1:
+            #self.__connect_room_groups(groups=groups)
+            self.generate()
+        else:
+            print("Map generated with {0} rooms.".format(len(self.__rooms)))
+
+    def __connect_room_groups(self, groups):
+        print("{0} groups of rooms generated, attempting to connect groups.".format(len(groups)))
+
+        for group in groups:
+            group_rect = self.__get_group_extents(group)
+
+    def __get_group_extents(self, group):
+        """
+        returns rectangle coordinates defining the bounding area of room group
+        """
+        x_min = self.width
+        x_max = 0
+        y_min = self.height
+        y_max = 0
+        for room in group:
+            if room is not None:
+                x, y = self.get_coordinates(room)
+
+                if x < x_min: x_min = x
+                elif x > x_max: x_max = x
+
+                if y < y_min: y_min = y
+                elif y > y_max: y_max = y
+
+        return x_min, y_min, x_max, y_max
 
     def place_character(self, character, x=None, y=None):
         """
@@ -111,7 +141,7 @@ class Map(object):
 
         if x is None or y is None:
             # Random
-            room = self.rnd.choice(self.__rooms)
+            room = random.choice(self.__rooms)
             try:
                 room.occupy(character)
             except RoomAlreadyOccupiedError:
@@ -146,18 +176,7 @@ class Map(object):
                 room_group = self.group_attached(room, room_group)
                 groups.append(room_group)
 
-        largest_group = None
-        for group in groups:
-            if largest_group is None:
-                largest_group = group
-            else:
-                if len(group) > len(largest_group):
-                    largest_group = group
-
-        for group in groups:
-            if group is not largest_group:
-                # Iterate and build/connect groups to each other
-                pass
+        return groups
 
     def group_attached(self, room, group=None):
         """
@@ -177,7 +196,7 @@ class Map(object):
         """
         Returns the x, y coordinates of the requested room
         """
-        if self.__rooms.index(room):
+        if room in self.__rooms:
             for x in range(self.width):
                 for y in range(self.height):
                     if room == self.map[x][y]:
