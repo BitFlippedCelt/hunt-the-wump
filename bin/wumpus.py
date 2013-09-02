@@ -14,6 +14,7 @@ def parse_commandline():
     parser.add_argument('--height', type=int, default=10, help="Height to use for map")
     parser.add_argument('--seed', type=int, default=random.random() * 1000,
                         help="Seed random generator with given value")
+    parser.add_argument('--ui', type=str, default="text", help="UI to load (curses, gtk, text)")
 
     return parser.parse_args()
 
