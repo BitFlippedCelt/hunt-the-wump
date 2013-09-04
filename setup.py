@@ -14,7 +14,7 @@ config = {
     'version': '0.1',
     #'install_requires': [],
     'packages': ['game'],
-    'scripts': ['bin/wump.py'],
+    'scripts': ['bin/wumpus.py'],
     'name': 'HuntTheWump'
 }
 
