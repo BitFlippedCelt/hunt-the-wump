@@ -1,5 +1,7 @@
 __author__ = 'petastream'
 
+import json
+
 from game import NORTH, EAST, SOUTH, WEST
 from game import DIRECTIONS
 from game import invert_direction, InvalidDirectionError
@@ -43,6 +45,8 @@ class Room(object):
         "B"
     )
 
+    room_counter = 0
+
     def __init__(self, type=EMPTY):
         """
         Room object initializer.
@@ -53,6 +57,10 @@ class Room(object):
         self.__neighbors = [None, None, None, None]
         self.__occupant = None
         self.__type = type
+        self.room_id = Room.room_counter
+
+        #Increment the room id so the next room has a unique id
+        Room.room_counter += 1
 
     def add_neighbor(self, room, direction):
         """
@@ -157,6 +165,11 @@ class Room(object):
 
     def __json__(self):
         """
-        Output room as
+        Output room as a JSON object
         """
-        pass
+        return json.dumps( {
+            "id": self.__id,
+            "neighbors": [room.room_id for room in self.__neighbors],
+            "type": self.__type,
+            "occupant": self.__occupant.character_id
+        } )
